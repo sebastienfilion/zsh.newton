@@ -53,10 +53,15 @@ function get_redis_status() {
   redis-cli ping >/dev/null 2>/dev/null && echo "\033[0;32m●\033[0m" || echo "\033[0;31m●\033[0m"
 }
 
+function get_mongo_status() {
+  echo 'db.runCommand("ping").ok' | mongo 127.0.0.1:27017/test --quiet > /dev/null 2> /dev/null && \
+  echo "\033[0;32m●\033[0m" || echo "\033[0;31m●\033[0m"
+}
+
 function print_header() {
   local LEFT_SIDE="\033[0;36m$(local_ip)\033[0m ✦ \033[0;34m$(external_ip)\033[0m"
-  local RIGHT_SIDE="$(get_redis_status) Redis"
-  local SPACE_WIDTH=$(( $COLUMNS - 33 ))
+  local RIGHT_SIDE="$(get_redis_status) Redis $(get_mongo_status) Mongo"
+  local SPACE_WIDTH=$(( $COLUMNS - 41 ))
   printf $LEFT_SIDE
   printf ' %.0s' {1..$SPACE_WIDTH}
   printf $RIGHT_SIDE
